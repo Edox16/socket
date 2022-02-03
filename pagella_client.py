@@ -25,8 +25,12 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
         elif comandi=='exit':
             print(data.decode())
             break
-        elif comandi=='#set':
-            pass#modificare
+        elif comandi.find('#get')!=-1:
+            deserialized_dict=json.load(data)
+            deserialized_dict=deserialized_dict[0]
         else:
-            print("Comando modificata: ", data.decode())
+           deserialized_dict=data.decode()
+           print(data.decode(), " o(doppia visualizzazione; equivalente) ", deserialized_dict)
     s.close()
+
+ 
