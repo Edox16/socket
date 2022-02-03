@@ -10,7 +10,7 @@ PORT=65434
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
     s.connect((HOST,PORT))
     while True:
-        comandi=input('Comandi che puoi utilizzare:\n #list: per vedere i voti inseriti;\n #set /nomestudente: per inserire uno studente;\n #put /nomestudente/materia/voto/ore: per aggiungere i voti della materia allo studente;\n #get /nomestudente: per richiedere i voti di uno studente;\n #exit: per chiudere solo il client;\n #close: per chiudere sia il client sia il server.\n')
+        comandi=input('Comandi che puoi utilizzare:\n #list: per vedere i voti inseriti;\n #set /nomestudente: per inserire uno studente;\n #put /nomestudente/materia/voto/ore: per aggiungere i voti della materia allo studente;\n #get /nomestudente: per richiedere i voti di uno studente;\n #exit: per chiudere solo il client.\n')
         messaggio={
             'Comando': comandi
         }
@@ -30,7 +30,7 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
             deserialized_dict=deserialized_dict[0]
         else:
            deserialized_dict=data.decode()
-           print(data.decode(), " o(doppia visualizzazione; equivalente) ", deserialized_dict)
+           print(data.decode())#deserialized_dict
     s.close()
 
  
