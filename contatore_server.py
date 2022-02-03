@@ -26,7 +26,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 risposta="Numero del messaggio: " + str(cont) + "; " + stri
                 cont += 1
             else:
-                risposta='Ricevuto "KO" dal server. Chiudo la connessione con il client.'
+                risposta='KO ricevuto dal server. Chiudo la connessione con il client.'
             cs.sendall(risposta.encode("UTF-8"))
 
 
