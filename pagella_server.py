@@ -29,9 +29,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print("Connessione a ", address)
         while True:
             data=cs.recv(1024)
-	    if not data:
-		break
-            data=data.decode()
+            if not data:
+                break
+            data=data.decode() 
             data=data.strip()
             data=json.loads(data)
             comando=data['Comando']
@@ -57,48 +57,44 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     cs.sendall("studente già inserito".encode())
             elif (stringa.find('#put')!=-1):
                 presente=False
-		stringhe=comando.split('/')
-		nome=stringhe[1]
-		materia=stringhe[2]
-		if (nome in voti):
-			for stud, mat in students.items():
-				if(stud==nome):
-					for i in mat:
-						print(mat)
-						if (mat==i[0]):
-							print(mat)
-							if (mat==i[0]):
-								print(i[0])
-								presente=True
-			if (presente==False):
-				voto=int(stringhe[3])
-				ore=int(stringhe[4])
-				mater=[materia, voto, ore]
-				voti[nome].append(mater)
-				cs.sendall("inserimento appena effettuato".encode())
-			else:
-				cs.sendall("trovata ridondanza con la materia".encode())
-		else:
-			cs.sendall("studente non trovato. Ritenta: sarai più fortunato!".encode())
+                stringhe=comando.split('/')
+                nome=stringhe[1]
+                materia=stringhe[2]
+                if nome in students:
+                    for stud, mat in students.items():
+                        if (stud==nome):
+                            for i in mat:
+                                print(mat)
+                                if (mat==i[0]):
+                                    print (mat)
+                                    presente=True
+                if (presente==False):
+                    voto=int(stringhe[3])
+                    ore=int(stringhe[4])
+                    mater=[materia, voto, ore]
+                    students[nome].append(mater)
+                    cs.sendall("inserimento appena effettuato".encode())
+                else:
+                    cs.sendall("trovata ridondanza con la materia".encode())
             elif (comando.find('#get')!=-1):
                 stringaS=""
                 stringa=comando.split('/')
-                nome=stringa[1]     
+                nome=stringa[1]
                 if nome in students:
-                    serialized_dict=json.dumps(students[nome])
+                    serialized_dict=json.dump(students[nome])
                     cs.sendall(serialized_dict.encode())
                 else:
                     lista=["Lo studente non è stato trovato"]
                     serialized_dict=json.dumps(lista)
                     cs.sendall(serialized_dict.encode())
-
             else:
-                cs.sendall("Il comando non è stato trovato. Riprova".encode())
+                cs.sendall("Il comando non è stato trovato. Ritenta".encode())ù
                 print(cs.getpeername)
                 pp=pprint.PrettyPrinter(indent=4)
                 pp.pprint(students)
 
             cs.close()
+	
             
 
         
