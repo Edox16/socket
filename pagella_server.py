@@ -94,6 +94,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 pp.pprint(students)
 
             cs.close()
+            #fine
 	
             
 
