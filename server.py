@@ -2,10 +2,11 @@ import socket
 import json
 
 HOST='127.0.0.1'
-PORT=65432
+PORT=22009
 
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))#tupla: array non modificabile
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.listen()
     print("[*] In ascolto su %s:%d "%(HOST, PORT))
     #conversione del client

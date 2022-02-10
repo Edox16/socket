@@ -1,3 +1,4 @@
+#Importo le solite classi: socket, json.
 import json
 import socket
 
@@ -20,12 +21,14 @@ def invia_comandi(sock_service):
         print("Risultato: ",data.decode())#Decode trasforma da un vettore di byte ad un vettore di stringa
         #Fine parte client
 
+#creo una funzione "connessione_server" a cui passo l'address e la porta
 def  connessione_server(address, port):
     sock_service=socket.socket()
     sock_service.connect((SERVER_ADDRESS, SERVER_PORT))
     print("Connesso a " + str((SERVER_ADDRESS, SERVER_PORT)))
     invia_comandi(sock_service)
 
+#Ulteriore if, che indica che il programma è funzionante e che perciò può avviarsi la connessione
 if __name__=='__main__':
     connessione_server(SERVER_ADDRESS, SERVER_PORT)
 

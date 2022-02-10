@@ -3,7 +3,7 @@ import json
 
 #Dichiaro una porta e gli assegno un valore (127.0.0.1) e dopo una porta (65433)
 HOST="127.0.0.1"
-PORT=65433
+PORT=22009
 
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
     s.connect((HOST,PORT))
