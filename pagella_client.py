@@ -27,7 +27,6 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
             break
         elif comandi.find('#get')!=-1:
             deserialized_dict=json.load(data)
-            deserialized_dict=deserialized_dict[0]
         else:
            deserialized_dict=data.decode()
            print(data.decode())#deserialized_dict

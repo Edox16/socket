@@ -1,6 +1,14 @@
 #Importo il socket ed il json
 import socket
 import json
+#Per l'esecuzione di questo esercizio sono andato a sfogliare alcuni
+#notebook che erano stati fatti l'anno scorso, i quali mi sono stati utili
+#sia per ripassare alcuni concetti riguardanti il ciclo for sia per ripassare
+#alcune funzioni, o almeno utilizzi/gestioni, delle tuple. Però ho completato 
+#la parte finale a casa, e di conseguenza non sono riuscito a testare il
+#programma: mi auguro che non abbia fatto alcun tipo di errore di battitura,
+#non essendo riuscito appunto a visualizzare gli errori che mi avrebbero aiutato
+#nell'individuazione degli eventuali refusi.
 import pprint
 from textwrap import indent
 
@@ -21,6 +29,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print("Connessione a ", address)
         while True:
             data=cs.recv(1024)
+	    if not data:
+		break
             data=data.decode()
             data=data.strip()
             data=json.loads(data)
@@ -46,8 +56,30 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     students[nome]=[]
                     cs.sendall("studente già inserito".encode())
             elif (stringa.find('#put')!=-1):
-                #devo finirlo
-                pass
+                presente=False
+		stringhe=comando.split('/')
+		nome=stringhe[1]
+		materia=stringhe[2]
+		if (nome in voti):
+			for stud, mat in students.items():
+				if(stud==nome):
+					for i in mat:
+						print(mat)
+						if (mat==i[0]):
+							print(mat)
+							if (mat==i[0]):
+								print(i[0])
+								presente=True
+			if (presente==False):
+				voto=int(stringhe[3])
+				ore=int(stringhe[4])
+				mater=[materia, voto, ore]
+				voti[nome].append(mater)
+				cs.sendall("inserimento appena effettuato".encode())
+			else:
+				cs.sendall("trovata ridondanza con la materia".encode())
+		else:
+			cs.sendall("studente non trovato. Ritenta: sarai più fortunato!".encode())
             elif (comando.find('#get')!=-1):
                 stringaS=""
                 stringa=comando.split('/')
