@@ -115,7 +115,6 @@ if __name__ == '__main__':
         process[num].join()
     end_time=time.time()
     print("Total PROCESS time= ", end_time - start_time)
-=======
 #calcolatrice client per calcoServer.py versione multithread
 #Giamboi Edoardo Francesco
 #Importo le librerie
@@ -232,4 +231,3 @@ if __name__ == '__main__':
         process[num].join()
     end_time=time.time()
     print("Total PROCESS time= ", end_time - start_time)
->>>>>>> 4480560d5d7161db71fb569f96392736e3264ec0
