@@ -1,4 +1,5 @@
 #nome del file : pagellaClientMulti.py
+from concurrent.futures import thread
 import socket
 import sys
 import random
@@ -8,6 +9,7 @@ import threading
 import multiprocessing
 import json
 import pprint
+
 
 SERVER_ADDRESS = '127.0.0.1'
 SERVER_PORT = 22225
@@ -58,6 +60,9 @@ def genera_richieste1(num,address,port):
     messaggio=json.dumps(messaggio)
     s.sendall(messaggio.encode("UTF-8"))
     data=s.recv(1024)
+    data=data.decode()
+    data=json.loads(data)
+    print(f"Dati ricevuti dal server {data}")
     if not data:
         print(f"{threading.current_thread().name}: Server non risponde. Exit")
     else:
@@ -68,9 +73,11 @@ def genera_richieste1(num,address,port):
         # voto [8..9] Buono
         # voto = 10 Ottimo -> PER CONTROLLO
         #4 stampare la valutazione ricevuta esempio: La valutazione di Studente4 in italiano è Gravemente insufficiente
+        studente=data['studente']
+        materia=data['materia']
+        print(f"{threading.current_thread().name} La valutazione di studente n.{stud} è: {data['studente']} in {data['materia']} è {data['risultato']}")
         s.close()
     end_time_thread=time.time()
-    print(f"La valutazione di studente n.{stud} è: {data.decode()}")
     print("Il tempo è: ", end_time_thread-start_time_threads)
 
 #Versione 2 
@@ -84,23 +91,32 @@ def genera_richieste2(num,address,port):
         sys.exit()
   #....
   #   1. Generazione casuale di uno studente(valori ammessi: 5 cognomi a caso scelti da una lista)
-    stud=random.randint(0, 5) 
-    materia=random.randint(0, 4)
-    voto=random.randint(1, 10)
-    assenza=random.randint(1, 5)
+    studenti=['Giuseppe Gullo', 'Antonio Barbera', 'Nicola Spina', 'Edoardo Giamboi', 'Luca Rossi']
+    #stud=random.randint(0, 5) 
+    materie=['Matematica', 'Italiano', 'Inglese', 'Storia', 'Geografia']
+    #materia=random.randint(0, 4)
+    #voto=random.randint(1, 10)
+    #assenza=random.randint(1, 5)
+    pagel=[]
+    for m in materie:
+        voto=random.randint(1, 10)
+        assenze=random.randint(1, 5)
+        pagel.append(m, voto, assenze)
     messaggio={
-            'studente' :stud,
-            'materia':materia,
-            'voto':voto,
-            'assenza':assenza,
+            'studente' :studenti,
+            'pagella': pagel,
     }
     messaggio=json.dumps(messaggio)
     s.sendall(messaggio.encode("UTF-8"))
     data=s.recv(1024)
+    data=data.decode()
+    data=json.loads(data)
+    print(f"Dati ricevuti dal server {data}")
+
     if not data:
         print(f"{threading.current_thread().name}: Server non risponde. Exit")
     else:
-        print(f"{threading.current_thread().name}: Studente: {data.decode()}")
+        print(f"{threading.current_thread().name}: Studente: {data['studente']} ha una media di: {data['media']}, con un totale di assenze di {data['assenze']}")
     s.close()
   #   Per ognuna delle materie ammesse: Matematica, Italiano, inglese, Storia e Geografia)
   #   generazione di un voto (valori ammessi 1 ..10)
@@ -123,40 +139,54 @@ def genera_richieste3(num,address,port):
   #3  ricevere il risultato come json e stampare l'output come indicato in CONSOLE CLIENT V.3
     try:
         s=socket.socket()
-        s.connect((address,port))
-        print(f"\n{threading.current_thread().name} {num+1}) Connessione al server: {address}:{port}")
+        s.connect((address, port))
+        print(f"\n{threading.current_thread().name} {num+1}. Connessione al server {address}/{port}") 
     except:
-        print(f"{threading.current_thread().name} Qualcosa è andato storto, sto uscendo... \n")
-        sys.exit()
+        print(f"{threading.current_thread().name} Errore di connessione...\n") 
+        sys.exit()  
+
   #....
   #   1. Generazione casuale di uno studente(valori ammessi: 5 cognomi a caso scelti da una lista)
-    stud=random.randint(0, 4) 
-    materia=random.randint(0, 4)
-    voto=random.randint(1, 10)
-    assenza=random.randint(1, 5)
-    messaggio={
-            'studente' :stud,
-            'materia':materia,
-            'voto':voto,
-            'assenza':assenza
-    }
-    messaggio=json.dumps(messaggio)
-    s.sendall(messaggio.encode("UTF-8"))
+    studenti=['Giuseppe Gullo', 'Antonio Barbera', 'Nicola Spina', 'Edoardo Giamboi', 'Luca Rossi']
+    #stud=random.randint(0, 5) 
+    materie=['Matematica', 'Italiano', 'Inglese', 'Storia', 'Geografia']
+    #materia=random.randint(0, 4)
+    #voto=random.randint(1, 10)
+    #assenza=random.randint(1, 5)
+    tab={}
+    for stud in studenti:
+        pagella=[]
+        for m in materie:
+            voto=random.randint(1, 10)
+            assenze=random.randint(1,5)
+            pagella.append(m, voto, assenze)
+        tab[stud]=pagella
+    
+    print("Dati inviati al server ")
+    pp=pprint.PrettyPrinter(indent=4)
+    pp.pprint(tab)
+    tab=json.dumps(tab)
+    s.sendall(tab.encode("UTF-8"))
     data=s.recv(1024)
-    data=json.loads
-    if not data:
-        print(f"{threading.current_thread().name}: Server non risponde. Exit")
-    else:
-        print(f"{threading.current_thread().name}: La valutazione di studente è: {data.decode()}")
-    s.close()
+    data=data.decode()
+    data=json.loads(data)
+    print("Dati ricevuti dal server")
+    pp.pprint(data)
 
+    if not data:
+        print(f"{threading.current_thread().name}. Il server non risponde. Exit.")
+    else:
+        for elemento in data:
+            print(f"{threading.current_thread().name}: Studente: {data['studente']} ha una media di: {data['media']}, con un totale di assenze di {data['assenze']}")
+    s.close()
 if __name__ == '__main__':
     start_time=time.time()
     # PUNTO A) ciclo per chiamare NUM_WORKERS volte la funzione genera richieste (1,2,3)
     # alla quale passo i parametri (num,SERVER_ADDRESS, SERVER_PORT)
     for num in range(0, NUM_WORKERS):
         genera_richieste1(num, SERVER_ADDRESS, SERVER_PORT)
-
+        #genera_richieste2(num, SERVER_ADDRESS, SERVER_PORT)
+        #genera_richieste3(num, SERVER_ADDRESS, SERVER_PORT)
     end_time=time.time()
     print("Total SERIAL time=", end_time - start_time)
      
@@ -168,10 +198,25 @@ if __name__ == '__main__':
     for num in range (0, NUM_WORKERS):
         # ad ogni iterazione appendo il thread creato alla lista threads
         threads.append(threading.Thread(target=genera_richieste1, args=(num, SERVER_ADDRESS, SERVER_PORT,)))
-        #thread2=threads.append(threading.Thread(target=genera_richieste2, args=(num, SERVER_ADDRESS, SERVER_PORT,)))
-        #thread3=threads.append(threading.Thread(target=genera_richieste3, args=(num, SERVER_ADDRESS, SERVER_PORT,)))
+        #threads.append(threading.Thread(target=genera_richieste2, args=(num, SERVER_ADDRESS, SERVER_PORT,)))
+        #threads.append(threading.Thread(target=genera_richieste3, args=(num, SERVER_ADDRESS, SERVER_PORT,)))
+    [thread.start() for thread in threads]
+    [thread.join() for thread in threads]
+    end_time=time.time()
+    print("Total THREADS time= ", end_time - start_time)
 
-    for i in range (len(threads)):
+    start_time=time.time()
+    process=[]
+    for num in range(NUM_WORKERS):
+        process.append(multiprocessing.Process(target=genera_richieste1, args=(num, SERVER_ADDRESS, SERVER_PORT, )))
+        #process.append(multiprocessing.Process(target=genera_richieste2, args=(num, SERVER_ADDRESS, SERVER_PORT, )))
+        #process.append(multiprocessing.Process(target=genera_richieste3, args=(num, SERVER_ADDRESS, SERVER_PORT, )))
+    [process.start() for process in process]
+    [process.join() for process in process]
+    end_time=time.time()
+    print("Total PROCESS time= ", end_time-start_time)
+
+    """for i in range (len(threads)):
         threads[i].start()
         #thread2[i].start()
         #thread3[i].start()
@@ -181,7 +226,7 @@ if __name__ == '__main__':
         #thread2[i].join()
         #thread3[i].join()
     end_time=time.time()
-    print("Total THREADS time= ", end_time - start_time)
+    print("Total THREADS time= ", end_time - start_time)"""
 
     """start_time=time.time()
     process=[]
